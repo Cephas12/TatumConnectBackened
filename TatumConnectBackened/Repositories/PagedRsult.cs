@@ -2,12 +2,13 @@
 
 namespace TatumConnectBackened.Repositories
 {
-    internal class PagedRsult<T> : PagedResult<Microsoft.Identity.Client.NativeInterop.Account>
+    internal class PagedRsult<T> : PagedResult<T>
     {
-        public List<Entities.Account> items { get; set; }
+        // Corrected typos and generic base type. Keep internal usage limited.
+        public List<T> Items { get; set; } = new List<T>();
         public int PagedNumber { get; set; }
-        public int PageSize { get; set; }
-        public int TotalCount { get; set; }
-        public int totalPages { get; set; }
+        public new int PageSize { get; set; }
+        public new int TotalCount { get; set; }
+        public int TotalPages { get; set; }
     }
 }

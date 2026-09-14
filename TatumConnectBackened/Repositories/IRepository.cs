@@ -33,7 +33,6 @@ namespace TatumConnectBackened.Repositories
 
         Task<int> SavedChangesAsync(
             CancellationToken ct = default);
-        Task<PagedResult<User>> GetPagedAsync(Guid? userId, PaginationParameters pagination, CancellationToken ct = default);
-        Task<User?> GetByEmailAsync(string email);
+
     }
 }

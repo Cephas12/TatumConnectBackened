@@ -1,4 +1,6 @@
-﻿    namespace TatumConnectBackened.Entities
+using TatumConnectBackened.Common.Constants;
+
+namespace TatumConnectBackened.Entities
 {
     public class Biller
     {

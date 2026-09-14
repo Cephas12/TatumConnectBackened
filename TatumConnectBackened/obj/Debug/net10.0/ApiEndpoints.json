@@ -1,5 +1,76 @@
 [
   {
+    "ContainingType": "TatumConnectBackened.Controllers.ProductsController",
+    "Method": "GetBillers",
+    "RelativePath": "api/Products/billers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "category",
+        "Type": "System.Nullable\u00601[[TatumConnectBackened.Common.Constants.BillerCategory, TatumConnectBackened, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TatumConnectBackened.Responses.ApiResponse\u00601[[TatumConnectBackened.Common.Models.PagedResult\u00601[[TatumConnectBackened.DTOs.BillerDto, TatumConnectBackened, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], TatumConnectBackened, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "TatumConnectBackened.Controllers.ProductsController",
+    "Method": "GetBiller",
+    "RelativePath": "api/Products/billers/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "TatumConnectBackened.Responses.ApiResponse\u00601[[TatumConnectBackened.DTOs.BillerDto, TatumConnectBackened, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "TatumConnectBackened.Responses.ApiResponse\u00601[[TatumConnectBackened.DTOs.BillerDto, TatumConnectBackened, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ]
+  },
+  {
     "ContainingType": "TatumConnectBackened.Controllers.TransactionsController",
     "Method": "Get",
     "RelativePath": "api/Transactions",
