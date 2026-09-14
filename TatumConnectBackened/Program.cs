@@ -168,6 +168,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TatumConnectBackened.Data.AppDbContext>();
+    await TatumConnectBackened.Data.DbSeeder.SeedAsync(dbContext);
+}
+
 app.Run();
 
 //EF core

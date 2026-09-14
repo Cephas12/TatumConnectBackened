@@ -20,12 +20,18 @@ namespace TatumConnectBackened.Services
         }
         public async Task SendAsync(string to, string subject, string htmlBody, CancellationToken ct = default)
         {
-            var smtp = _settings.Smtp;
+            var smtp = _settings?.Smtp;
+            if (smtp == null || string.IsNullOrWhiteSpace(smtp.Host))
+            {
+                _logger.LogWarning("SMTP host is not configured. Email to {Email} skipped.", to);
+                return;
+            }
+
             var message = new MimeMessage();
             message.From.Add(
                 new MailboxAddress(
-                    _settings.FromName,
-                    _settings.FromEmail));
+                    _settings.FromName ?? "TatumConnect",
+                    _settings.FromEmail ?? "noreply@tatumconnect.com"));
             message.To.Add(
                 MailboxAddress.Parse(to));
             message.Subject = subject;
@@ -36,22 +42,24 @@ namespace TatumConnectBackened.Services
             using var client = new SmtpClient();
             try
             {
+                using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutCts.Token);
+
                 await client.ConnectAsync(
                     smtp.Host,
                     smtp.Port,
                     SecureSocketOptions.SslOnConnect,
-                    ct);
+                    linkedCts.Token);
                 await client.AuthenticateAsync(
                     smtp.Username,
-                 smtp.Password, ct);
-                await client.SendAsync(message, ct);
+                    smtp.Password, linkedCts.Token);
+                await client.SendAsync(message, linkedCts.Token);
                 _logger.LogInformation("Email successfully sent to {Email}", to);
 
-          }
+            }
             catch(OperationCanceledException)
             {
-                _logger.LogWarning("Email sending was cancelled for {Email}", to);
-                throw;
+                _logger.LogWarning("Email sending timed out or was cancelled for {Email}", to);
             }
             catch(Exception ex)
             {
