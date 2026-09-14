@@ -1,0 +1,13 @@
+Dockerfile — Purpose and key responsibilities
+
+Purpose:
+- Instructions for building a container image for the API.
+
+What it does generally:
+- Uses a .NET SDK image to build the application and a smaller runtime image to run it, copies published output, and sets the entrypoint.
+
+Usage:
+- Build with docker build -t tatumconnectbackend . and run with docker run -p <port mapping>.
+
+Notes:
+- Ensure .dockerignore excludes files like bin/, obj/, .vs/ to keep image small.

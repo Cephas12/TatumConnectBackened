@@ -1,0 +1,15 @@
+Auth/EmailSettings.cs — Purpose and key responsibilities
+
+Purpose:
+- Strongly-typed configuration model for email (SMTP) settings read from configuration.
+
+Typical properties (based on usage):
+- FromName, FromEmail: sender display name and email.
+- Smtp: nested SMTP configuration (Host, Port, Username, Password).
+
+Usage:
+- Bound in Program.cs: builder.Services.Configure<EmailSettings>(Configuration.GetSection("Email")).
+- Injected into SmtpEmailSender via IOptions<EmailSettings> to configure SMTP connections.
+
+Notes:
+- Ensure secrets (SMTP password) are stored securely (environment variables or secret store) in production.

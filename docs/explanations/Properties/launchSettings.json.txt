@@ -1,0 +1,13 @@
+Properties/launchSettings.json — Purpose and key responsibilities
+
+Purpose:
+- Visual Studio and dotnet run launch profiles used for local debugging. Defines applicationUrl, environment variables, and SSL settings for profiles like IISExpress and Project.
+
+Key fields:
+- Profiles: may include IISExpress and the ProjectName profile with commandName, launchBrowser, applicationUrl, environmentVariables.
+
+Usage:
+- Visual Studio reads this to configure local launch settings; modify only for local development.
+
+Notes:
+- Do not store production-specific settings here; local-only overrides are fine.

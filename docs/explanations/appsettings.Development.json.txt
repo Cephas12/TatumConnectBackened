@@ -1,0 +1,13 @@
+appsettings.Development.json — Purpose and key responsibilities
+
+Purpose:
+- Environment-specific configuration overrides for the Development environment.
+
+What it typically contains:
+- Development connection strings (if different), logging verbosity, and any dev-only feature flags.
+
+Usage:
+- When ASPNETCORE_ENVIRONMENT is set to Development, these values override appsettings.json.
+
+Notes:
+- Do not commit secrets to source control; use user secrets or environment variables for development secrets instead.

@@ -1,0 +1,13 @@
+DTOs/VerifyRegistrationOtpRequestDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Payload used to verify the one-time password (OTP) during registration.
+
+Typical fields:
+- Email (or Phone) and Otp: the identifier and the code to verify.
+
+Usage:
+- Bound in AuthController.Verify and passed to AuthService.VerifyRegistrationOtpAsync which verifies OTP and activates the user's account if valid.
+
+Notes:
+- Validate OTP expiry and decrement remaining attempt count to mitigate brute-force attempts.

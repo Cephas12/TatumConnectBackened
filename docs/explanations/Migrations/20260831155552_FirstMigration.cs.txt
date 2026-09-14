@@ -1,0 +1,14 @@
+Migrations/20260831155552_FirstMigration.cs — Purpose and key responsibilities
+
+Purpose:
+- EF Core migration class that describes the initial schema changes to create tables and constraints in the database.
+
+What it contains:
+- Up method: creates tables (Users, Accounts, RefreshTokens, Notifications, etc.), indices, foreign keys.
+- Down method: drops created tables to revert the migration.
+
+Usage:
+- Applied to the database using dotnet ef database update or via context.Database.MigrateAsync in code (DbSeeder uses MigrateAsync).
+
+Notes:
+- Do not manually edit migration code unless you understand the database changes; instead, create new migrations using dotnet ef migrations add <Name>.

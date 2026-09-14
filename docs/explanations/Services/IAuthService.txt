@@ -1,0 +1,10 @@
+Services/IAuthService.cs — Purpose and key responsibilities
+
+Purpose:
+- Abstraction for authentication-related business operations used by controllers.
+
+Methods declared:
+- RegisterAsync(RegisterRequestDto), VerifyRegistrationOtpAsync, LoginAsync(LoginRequestDto), ResendRegistrationOtpAsync.
+
+Usage:
+- AuthController depends on IAuthService; AuthService implements this contract.

@@ -1,0 +1,13 @@
+DTOs/ResendRegistrationOtpRequestDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Payload used when a client requests the server to resend the registration OTP.
+
+Typical fields:
+- Email or Phone: identifier to find the user and resend OTP.
+
+Usage:
+- Bound in AuthController.ResendRegistrationOtp and passed to AuthService.ResendRegistrationOtpAsync.
+
+Notes:
+- Rate-limit OTP resends to prevent abuse.

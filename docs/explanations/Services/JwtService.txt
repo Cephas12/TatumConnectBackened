@@ -1,0 +1,15 @@
+Services/JwtService.cs — Purpose and key responsibilities
+
+Purpose:
+- Generates JWT access tokens for authenticated users. This is functionally the same as Auth/JwtService.cs but located in Services namespace.
+
+What it does:
+- Builds claims including subject (user.Id), email, NameIdentifier, and role.
+- Uses JwtSettings secret to create symmetric signing key and signs token with HmacSha256.
+- Returns serialized token string.
+
+Usage:
+- AuthService calls GenerateAccessToken to issue access tokens after successful login.
+
+Recommendation:
+- Consolidate with Auth/JwtService.cs to avoid duplicate code.

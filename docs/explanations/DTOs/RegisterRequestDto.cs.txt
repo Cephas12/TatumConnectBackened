@@ -1,0 +1,11 @@
+DTOs/RegisterRequestDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Defines the shape of the registration request payload accepted by the API.
+
+Key aspects:
+- Properties: Email, Password, FirstName, LastName, Phone.
+- Data annotations enforce validation: Required, EmailAddress, MinLength/MaxLength, RegularExpression for password complexity and name characters.
+
+Usage:
+- Model-bound in AuthController.Register. Model state validation will automatically reject invalid input before hitting service logic.

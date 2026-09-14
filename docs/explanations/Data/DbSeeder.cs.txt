@@ -1,0 +1,16 @@
+DbSeeder.cs — Purpose and key responsibilities
+
+Purpose:
+- Applies pending EF migrations and seeds initial data (Super Admin) into the database.
+
+What it does:
+- Calls context.Database.MigrateAsync() to apply migrations.
+- Seeds a single Super Admin user if not present.
+- Hashes the default development password with SHA256 and generates a staff id (STF-YYYY-######).
+
+Usage:
+- Can be called from Program.cs at startup (create scope and call SeedAsync) or used manually.
+
+Notes:
+- The seeded password is for development only; change or remove before production.
+- SHA256 is not an appropriate password storage strategy for production (use bcrypt/Argon2/PBKDF2 with salt).

@@ -66,9 +66,13 @@ builder.Services.AddSwaggerGen(options =>
 //egister repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-//builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 //builder.Services.AddScoped<ITransferRepository, TransferRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+// Register transaction services and current user service, and HTTP context accessor
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddHttpContextAccessor();
 //builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 //builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 //builder.Services.AddScoped<IBeneficiaryRepository, BeneficiaryRepository>();
@@ -148,8 +152,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+
 app.UseHttpsRedirection();
 
+// Enable authentication middleware (JWT)
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

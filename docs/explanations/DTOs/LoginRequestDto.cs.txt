@@ -1,0 +1,7 @@
+DTOs/LoginRequestDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Represents the login request payload with Email and Password properties.
+
+Usage:
+- Model-bound to AuthController.Login and processed by AuthService.LoginAsync.

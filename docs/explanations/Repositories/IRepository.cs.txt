@@ -1,0 +1,19 @@
+Repositories/IRepository.cs — Purpose and key responsibilities
+
+Purpose:
+- Defines the generic repository contract for basic CRUD operations and pagination.
+
+Typical methods declared:
+- Task<T?> GetByIdAsync(Guid id)
+- Task<IEnumerable<T>> GetAllAsync()
+- Task AddAsync(T entity)
+- void Update(T entity)
+- void Delete(T entity)
+- Task<PagedResult<T>> GetPagedAsync(...)
+- Task<int> SaveChangesAsync(CancellationToken ct)
+
+Usage:
+- Repository<T> implements this interface so services can depend on IRepository<T> abstractions.
+
+Notes:
+- Keep interface minimal and focused; avoid exposing EF Core types directly in interface signatures where possible.

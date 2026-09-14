@@ -1,0 +1,18 @@
+.dockerignore — Purpose and key responsibilities
+
+Purpose:
+- Specifies files and folders to exclude from the Docker build context when building images.
+
+Typical entries:
+- bin/
+- obj/
+- .vs/
+- .git
+- .gitignore
+- docker-compose.*
+
+Usage:
+- Ensure build artifacts and local IDE files are excluded to keep image small and avoid leaking secrets.
+
+Notes:
+- Keep in sync with .gitignore where appropriate, but .dockerignore is evaluated by Docker only.

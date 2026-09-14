@@ -1,0 +1,13 @@
+Migrations/20260909200750_AddUserColumns.Designer.cs — Purpose and key responsibilities
+
+Purpose:
+- Designer file that accompanies the AddUserColumns migration and contains metadata for EF tooling.
+
+What it contains:
+- Static metadata describing migration id and the EF model state after applying the migration.
+
+Usage:
+- Used by EF Core tools to manage and compare model snapshots when creating future migrations.
+
+Notes:
+- Do not hand-edit this file unless required and you understand EF Core migration internals.

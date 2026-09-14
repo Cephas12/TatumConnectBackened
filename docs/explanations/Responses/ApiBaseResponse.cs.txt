@@ -1,0 +1,10 @@
+Responses/ApiBaseResponse.cs — Purpose and key responsibilities
+
+Purpose:
+- Provides a standard structure for API responses: status, data payload, messages and detailed errors.
+
+What it does:
+- ApiResponse<T> likely contains Success flag, Data of type T, Message string, and collection of ApiError entries for structured error reporting.
+
+Usage:
+- Services return ApiResponse<T> to controllers, which map them to appropriate HTTP status codes and JSON payloads.

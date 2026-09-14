@@ -1,0 +1,10 @@
+Entities/Notification.cs — Purpose and key responsibilities
+
+Purpose:
+- Represents an in-app or persisted notification sent to a customer.
+
+Fields:
+- Id, CustomerId, Subject, Message, Type (e.g., General), Status (Unread/Read), CreatedAt, ReadAt.
+
+Usage:
+- Created by NotificationService and stored via NotificationRepository to later query a user's notifications.

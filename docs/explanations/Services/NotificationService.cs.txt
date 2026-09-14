@@ -1,0 +1,12 @@
+Services/NotificationService.cs — Purpose and key responsibilities
+
+Purpose:
+- Business service that orchestrates sending notifications (email and SMS) and persisting in-app notifications.
+
+What it does:
+- SendEmailAsync uses injected IEmailSender to send messages and returns ApiResponse with success/failure details.
+- SendSmsAsync composes an HTTP request to the configured SMS provider using injected HttpClient.
+- Other methods (e.g., GetByCustomerAsync, SendAsync overloads) are currently unimplemented and should be completed.
+
+Usage:
+- Called by AuthService to send registration OTPs and by other services when notifications are required.

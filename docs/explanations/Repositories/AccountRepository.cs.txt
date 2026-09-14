@@ -1,0 +1,13 @@
+Repositories/AccountRepository.cs — Purpose and key responsibilities
+
+Purpose:
+- Concrete repository implementing account-specific data access operations.
+
+What it typically contains:
+- Methods to create accounts, fetch by account number, fetch by customer id, update balances, support paging and filters.
+
+Usage:
+- Injected into services managing account workflows (e.g., transfers, payments).
+
+Notes:
+- Ensure balance updates are done within a transaction or using optimistic concurrency to prevent race conditions.

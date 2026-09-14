@@ -1,0 +1,12 @@
+Entities/Account.cs — Purpose and key responsibilities
+
+Purpose:
+- Domain model representing a bank/customer account in the system.
+
+Key properties:
+- Id, CustomerId (foreign key), AccountNumber, Name.
+- Currency, LedgerBalance, AvailableBalance, Status, CreatedAt, IsActive.
+- Navigation property Customer to link to the User entity.
+
+Usage:
+- Managed by AccountRepository and surfaced in DTOs (AccountDto) for APIs.

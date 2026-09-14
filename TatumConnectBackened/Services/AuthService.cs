@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.Ajax.Utilities;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -244,6 +245,22 @@ namespace TatumConnectBackened.Services
 
             return ApiResponse<UserDto>.Ok(MapToDto(user), "Registration verified successfully");
         }
+        private async Task<string> GenerateAccountNumberAsync()
+        {
+            while (true)
+            {
+                var accountNumber = RandomNumberGenerator.GetInt32(1000000, 100000000).ToString();
+
+
+
+                var exists = await _accountRepository.GetFilteredAsync(accountNumber: accountNumber);
+
+                if (!exists.Any())
+                {
+                    return accountNumber;
+                }
+            }
+        }
 
         public async Task<ApiResponse<UserDto>> ResendRegistrationOtpAsync(ResendRegistrationOtpRequestDto request, CancellationToken ct = default)
         {
@@ -278,7 +295,7 @@ namespace TatumConnectBackened.Services
 
             return ApiResponse<UserDto>.Ok(MapToDto(user), "Verification code resent");
         }
-
+   
         public async Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request, CancellationToken ct = default)
         {
             var email = request.Email?.Trim().ToLowerInvariant();
@@ -311,5 +328,7 @@ namespace TatumConnectBackened.Services
 
             return ApiResponse<LoginResponseDto>.Ok(response, "Login successful");
         }
+        
     }
+    
 }

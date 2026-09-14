@@ -1,0 +1,17 @@
+Program.cs — Purpose and key responsibilities
+
+Purpose:
+- Application entry point and startup configuration for the ASP.NET Core Web API.
+
+What it does (concise):
+- Builds WebApplication via WebApplication.CreateBuilder(args).
+- Registers framework services: controllers, Swagger/OpenAPI, DbContext (SQL Server) and HttpClient factory.
+- Registers application services and repositories in DI (IUserRepository, IAccountRepository, INotificationService, IAuthService, JwtService, IEmailSender implementation).
+- Binds configuration sections to strongly typed options (JwtSettings, EmailSettings, SmsSettings).
+- Validates JWT settings and configures JwtBearer authentication with token validation parameters.
+- Adds Swagger UI middleware, configures routing and maps controllers.
+
+Notes / important lines to review:
+- Ensure app.UseAuthentication() is called before app.UseAuthorization() to enable authentication middleware.
+- DbSeeder exists but is not invoked—seeding won't run unless added here.
+- Watch duplicate service registrations (IUserRepository registered twice).

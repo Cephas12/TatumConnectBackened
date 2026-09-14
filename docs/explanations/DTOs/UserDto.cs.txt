@@ -1,0 +1,10 @@
+DTOs/UserDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Safe, public representation of user data returned by the API.
+
+Fields included:
+- Id, Email, FirstName, LastName, Phone, Department, ProfileImageUrl, StaffId, Role, RegistrationOtp (if used), IsActive, CreatedAt, LastLoginAt, Accounts (list of AccountDto).
+
+Usage:
+- Created by AuthService.MapToDto and returned in ApiResponse<UserDto>. Avoid exposing sensitive fields like PasswordHash in DTOs.

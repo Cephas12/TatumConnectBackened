@@ -1,0 +1,10 @@
+Repositories/NotificationRepository.cs — Purpose and key responsibilities
+
+Purpose:
+- Concrete implementation that persists Notification entities using AppDbContext.
+
+What it does:
+- Adds, queries and updates Notification records for customers. Exposes methods to be used by NotificationService and controllers.
+
+Usage:
+- Encapsulates EF queries and change tracking for notification operations.

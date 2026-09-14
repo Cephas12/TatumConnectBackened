@@ -64,6 +64,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "TatumConnectBackened.Controllers.TransactionsController",
+    "Method": "Purchase",
+    "RelativePath": "purchase",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "TatumConnectBackened.DTOs.ProductPurchaseRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "TatumConnectBackened.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",

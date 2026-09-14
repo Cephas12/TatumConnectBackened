@@ -1,0 +1,13 @@
+Services/IEmailSender.cs — Purpose and key responsibilities
+
+Purpose:
+- Abstraction for sending emails. Decouples higher-level services from the concrete SMTP implementation.
+
+Typical methods:
+- Task SendAsync(string to, string subject, string htmlBody, CancellationToken ct = default)
+
+Usage:
+- Implemented by SmtpEmailSender and injected into NotificationService.
+
+Notes:
+- Consider adding SendTemplateAsync or support for attachments if required by app features.

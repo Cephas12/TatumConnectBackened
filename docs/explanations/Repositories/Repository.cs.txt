@@ -1,0 +1,14 @@
+Repositories/Repository.cs — Purpose and key responsibilities
+
+Purpose:
+- Generic repository base providing common CRUD operations and pagination helpers.
+
+What it provides:
+- Access to DbSet<T> and AppDbContext.
+- Methods: GetByIdAsync, GetAllAsync, AddAsync, Update, Delete, CountAsync, ExistsAsync, GetPagedAsync (with and without filter), SaveChangesAsync.
+
+Usage:
+- Concrete repositories (e.g., UserRepository) inherit from Repository<T> to reuse generic logic.
+
+Notes:
+- The file contains some unimplemented or incorrectly placed user-specific stubs; keep the generic base focused and move user-specific methods to IUserRepository/UserRepository.

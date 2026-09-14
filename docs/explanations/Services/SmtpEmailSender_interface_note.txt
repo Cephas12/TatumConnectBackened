@@ -1,0 +1,5 @@
+Note about IEmailSender interface
+
+SmtpEmailSender implements IEmailSender. The project relies on the interface contract to decouple email sending:
+- Use Microsoft.AspNetCore.Identity.UI.Services.IEmailSender (or your own IEmailSender) consistently across the app.
+- Program.cs registers SmtpEmailSender as the concrete implementation so NotificationService can depend on the abstraction.

@@ -1,0 +1,13 @@
+DTOs/NotificationDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Represents a notification object exchanged between server and client.
+
+Typical fields:
+- Id, Subject, Message, Type, Status, CreatedAt, ReadAt.
+
+Usage:
+- Returned by NotificationService and controller endpoints to list or fetch notifications for a user.
+
+Notes:
+- Keep message content sanitized if containing user-generated content.

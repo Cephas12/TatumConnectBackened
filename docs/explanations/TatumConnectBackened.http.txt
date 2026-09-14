@@ -1,0 +1,13 @@
+TatumConnectBackened.http — Purpose and key responsibilities
+
+Purpose:
+- Collection of HTTP requests usable by tools like VS Code REST Client or Visual Studio HTTP tooling to test API endpoints.
+
+What it typically contains:
+- Example requests for Register, Login, Verify OTP, Resend OTP, and other API endpoints with sample payloads and environment variables for base URL.
+
+Usage:
+- Open in VS Code with REST Client extension or use it as a quick reference for request payloads when testing via Swagger or Postman.
+
+Notes:
+- Keep payloads up to date with DTO changes to avoid confusion during testing.

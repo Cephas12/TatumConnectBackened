@@ -1,0 +1,13 @@
+Migrations/AppDbContextModelSnapshot.cs — Purpose and key responsibilities
+
+Purpose:
+- Snapshot of the EF Core model at the time migrations were generated. It represents the current model state used by the EF tools to detect changes.
+
+What it contains:
+- BuildModel method which recreates the EF model (entities, properties, relationships, indexes) as C# code.
+
+Usage:
+- EF Core compares the current model to this snapshot to create new migrations.
+
+Notes:
+- Keep this file with migrations; do not manually edit without understanding EF Core model building.

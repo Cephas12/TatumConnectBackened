@@ -1,0 +1,11 @@
+Entities/RefreshToken.cs — Purpose and key responsibilities
+
+Purpose:
+- Entity placeholder for refresh token metadata related to a user.
+
+Current state:
+- Minimal fields: Id and UserId only.
+
+Usage and recommendation:
+- If refresh tokens are required, extend with Token (string), ExpiresAt, CreatedAt, RevokedAt fields and possibly Device/Ip metadata.
+- Stored in DB to allow revocation and to issue new access tokens.

@@ -1,0 +1,550 @@
+TatumConnectBackened - Full Line-by-Line Explanation
+
+Note: You asked for a literal line-by-line explanation for every file in the project. This file contains an explanation for each source file in the repository. Each file section shows the source file path followed by numbered explanations that correspond to the source file's lines. Use this as a study reference.
+
+---
+File: Program.cs
+1: using Microsoft.AspNetCore.Authentication.JwtBearer;                      // Imports types for JWT bearer authentication middleware.
+2: using Microsoft.EntityFrameworkCore;                                      // Imports EF Core types for DbContext and configuration.
+3: using Microsoft.IdentityModel.Tokens;                                     // Imports token validation types used when configuring JWT validation.
+4: using Microsoft.OpenApi;                                                   // Imports OpenAPI/Swagger types.
+5: using System.Reflection.Metadata;                                         // Not used directly; included by template or for metadata utilities.
+6: using System.Text;                                                         // Imports text encoding utilities used to convert JWT secret into bytes.
+7: using TatumConnectBackened.Auth;                                           // Imports project-level Auth namespace (JwtSettings, JwtService path references).
+8: using TatumConnectBackened.Common.Constants;                               // Imports app constants such as Settings and UserRoles.
+9: using TatumConnectBackened.Repositories;                                   // Imports repository interfaces/implementations for DI registration.
+10: using TatumConnectBackened.Services;                                      // Imports service interfaces/implementations used in DI.
+11: 
+12: var builder = WebApplication.CreateBuilder(args);                         // Creates a WebApplicationBuilder; entry-point for configuring services and pipeline.
+13: 
+14: // Add services to the container.
+15: 
+16: builder.Services.AddControllers();                                        // Registers MVC controllers as services; enables attribute routing and model binding.
+17: // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+18: builder.Services.AddOpenApi();                                            // Adds OpenAPI generation helpers (tooling from template).
+19: 
+20: builder.Services.AddDbContext<TatumConnectBackened.Data.AppDbContext>(options =>
+21:     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // Registers AppDbContext with SQL Server provider using connection string from configuration.
+22: 
+23: builder.Services.AddSwaggerGen(options =>
+24: {
+25:     options.SwaggerDoc(
+26:         "v1",
+27:         new OpenApiInfo
+28:         {
+29:             Title = "TatumConnect API",
+30:             Version = "v1",
+31:             Description = "TatumConnect Digital Banking API"
+32:         });
+33: 
+34:     //JWT BEARER AUTHENTICATION
+35: 
+36:     options.AddSecurityDefinition(
+37:         "Bearer",
+38:         new OpenApiSecurityScheme
+39:         {
+40:             Name = "Authorization",
+41:             Type = SecuritySchemeType.Http,
+42:             Scheme = "Bearer",
+43:             BearerFormat = "JWT",
+44:             In = ParameterLocation.Header,
+45:             Description = "Enter your JWT access token"
+46:         }
+47:         );
+48: 
+49:     //Apply JWT Authentication To SWAGGER
+50: 
+51:     options.AddSecurityRequirement(
+52:         document => new OpenApiSecurityRequirement
+53:         {
+54:             [
+55:                 new OpenApiSecuritySchemeReference(
+56:                     "Bearer",
+57:                     document)] = []
+58:         }
+59:         );
+60: });
+61: 
+62: 
+63: 
+64: //egister repository
+65: builder.Services.AddScoped<IUserRepository, UserRepository>();            // Registers IUserRepository with concrete UserRepository as scoped DI service.
+66: builder.Services.AddScoped<IAccountRepository, AccountRepository>();      // Registers IAccountRepository -> AccountRepository.
+67: //builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+68: //builder.Services.AddScoped<ITransferRepository, TransferRepository>();
+69: builder.Services.AddScoped<INotificationRepository, NotificationRepository>(); // Registers notifications repository.
+70: //builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+71: //builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+72: //builder.Services.AddScoped<IBeneficiaryRepository, BeneficiaryRepository>();
+73: //builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+74: 
+75: 
+76: //egister services
+77: builder.Services.AddScoped<INotificationService, NotificationService>(); // Registers INotificationService -> NotificationService.
+78: builder.Services.AddScoped<IUserRepository, UserRepository>();            // Duplicate registration of IUserRepository (harmless but redundant).
+79: builder.Services.AddScoped<IAccountRepository, AccountRepository>();      // Duplicate registration of IAccountRepository (redundant).
+80: //builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+81: //services
+82: 
+83: builder.Services.AddScoped<IAuthService, AuthService>();                  // Registers the AuthService implementing IAuthService.
+84: 
+85: // Register JwtService so it can be injected into AuthService
+86: builder.Services.AddScoped<TatumConnectBackened.Services.JwtService>();  // Registers concrete JwtService (Services namespace).
+87: 
+88: builder.Services.AddScoped<JwtSettings>();                                // Registers JwtSettings as a service for DI (not bound to configuration automatically here).
+89: builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings")); // Binds configuration "JwtSettings" to options.
+90: builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email")); // Binds email settings configuration.
+91: 
+92: builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();              // Registers IEmailSender -> SmtpEmailSender.
+93: builder.Services.AddHttpClient();                                         // Registers HttpClient factory for injection.
+94: builder.Services.Configure<SmsSettings>(builder.Configuration.GetSection("Sms")); // Binds SMS settings.
+95: var jwtSettings =
+96:     builder.Configuration
+97:     .GetSection("JwtSettings")
+98:     .Get<JwtSettings>();                                                     // Reads JwtSettings from configuration into a JwtSettings instance.
+99: 
+100: if (jwtSettings == null)
+101: {
+102:     throw new InvalidOperationException("JWT settings are not configured properly."); // Validates settings were found.
+103: }
+104: 
+105: if (string.IsNullOrWhiteSpace(jwtSettings.Secret))
+106: {
+107:     throw new InvalidOperationException("JWT secret is missing required values."); // Ensures secret is provided.
+108: }
+109: 
+110: builder.Services
+111:     .AddAuthentication(
+112:         JwtBearerDefaults.AuthenticationScheme)
+113:     .AddJwtBearer(options =>
+114:     {
+115:         options.TokenValidationParameters =
+116:             new TokenValidationParameters
+117:             {
+118:                 ValidateIssuer = true,
+119:                 ValidateAudience = true,
+120:                 ValidateLifetime = true,
+121:                 ValidateIssuerSigningKey = true,
+122:                 ValidIssuer = jwtSettings.Issuer,
+123:                 ValidAudience = jwtSettings.Audience,
+124:                 IssuerSigningKey = new SymmetricSecurityKey(
+125:                     Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+126:                 RoleClaimType = System.Security.Claims.ClaimTypes.Role,
+127:                 NameClaimType = System.Security.Claims.ClaimTypes.NameIdentifier
+128:             };
+129:     }
+130: );
+131: builder.Services.AddAuthorization();                                     // Adds the authorization services (policy system).
+132: var app = builder.Build();                                                // Builds the WebApplication host pipeline.
+133: 
+134: app.UseSwagger();                                                          // Adds middleware to generate Swagger JSON.
+135: 
+136: app.UseSwaggerUI(options =>
+137: {
+138:     options.SwaggerEndpoint("/swagger/v1/swagger.json", "TatumConnect API v1"); // Points swagger UI to generated endpoint.
+139:     options.RoutePrefix = "swagger";                                         // Sets the route prefix for swagger UI.
+140: });
+141: 
+142: 
+143: // Configure the HTTP request pipeline.
+144: if (app.Environment.IsDevelopment())
+145: {
+146:     app.MapOpenApi();                                                        // Maps OpenAPI endpoints when in development.
+147: }
+148: 
+149: app.UseHttpsRedirection();                                                  // Redirects HTTP to HTTPS.
+150: 
+151: app.UseAuthorization();                                                     // Adds authorization middleware (note: authentication middleware missing UseAuthentication()).
+152: 
+153: app.MapControllers();                                                       // Maps attribute routed controllers into the pipeline.
+154: 
+155: app.Run();                                                                  // Runs the application.
+156: 
+157: //EF core
+
+---
+File: Data/AppDbContext.cs
+1: using Microsoft.EntityFrameworkCore;                                        // EF Core namespace for DbContext, DbSet, ModelBuilder.
+2: using System.Net.Http.Headers;                                              // Not used in this file.
+3: using System.Transactions;                                                   // Not used here, likely leftover import.
+4: using TatumConnectBackened.Entities;                                        // Import entity classes (User, Account, RefreshToken).
+5: 
+6: namespace TatumConnectBackened.Data
+7: {
+8:     public class AppDbContext : DbContext
+9:     {
+10:         public AppDbContext(DbContextOptions<AppDbContext> Options) : base(Options) 
+11:         {
+12:         }
+13:         public DbSet<User> Users => Set<User>();                               // Defines Users DbSet for EF.
+14:         public DbSet<Account> Accounts => Set<Account>();                     // Defines Accounts DbSet.
+15:         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();      // Defines RefreshTokens DbSet.
+16: 
+17:         protected override void OnModelCreating(ModelBuilder modelBuilder)
+18:         {
+19:             base.OnModelCreating(modelBuilder);
+20:             modelBuilder.Entity<User>().HasKey(x => x.Id);                    // Configures primary key for User.
+21:             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();    // Adds a unique index on Email.
+22:             modelBuilder.Entity<Account>().HasKey(a => a.Id);                // Primary key for Account.
+23:             modelBuilder.Entity<RefreshToken>().HasKey(r => r.Id);          // Primary key for RefreshToken.
+24:            
+25:           
+26:         }
+27: 
+28: 
+29:     }
+30: }
+
+---
+File: Data/DbSeeder.cs
+1: using Microsoft.AspNetCore.Identity;                                        // Not used directly in this file; leftover import.
+2: using Microsoft.EntityFrameworkCore;                                        // Used to call Database.MigrateAsync and async LINQ.
+3: using System.Security.Cryptography;                                         // For SHA256 hashing.
+4: using System.Text;                                                          // For encoding password bytes.
+5: using TatumConnectBackened.Common.Constants;                                // For UserRoles constant.
+6: using TatumConnectBackened.Entities;                                        // For User entity.
+7: 
+8: namespace TatumConnectBackened.Data
+9: {
+10:     public static class DbSeeder
+11:     {
+12:         public static async Task SeedAsync(AppDbContext context)
+13:         {
+14:             //Apply pending migrations
+15:             await context.Database.MigrateAsync();                             // Applies any pending EF Core migrations to the database.
+16:             await SeedSuperAdminAsync(context);                               // Calls helper to create a super admin user if none exists.
+17:            // await SeedBillersAndProductsAsync(context);
+18:         }
+19:         //Super Admin
+20:         private static async Task SeedSuperAdminAsync(AppDbContext context)
+21:         {
+22:             const string email = "superadmin@tatumconnect.com";              // Hard-coded email for seeded super admin.
+23:             var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == email); // Check if user already exists.
+24:             if (existingUser != null) return;                                  // Exit if super admin already present.
+25:             var superAdmin = new User
+26:             {
+27:                 Id = Guid.NewGuid(),
+28:                 Email = email,
+29:                 //Developement password.
+30:                 //change this immediately in a real environment
+31: 
+32:                 PasswordHash = HashPassword("Admin@123456"),                 // Hash the development password using SHA256 helper.
+33:                 FirstName = "Tatum",
+34:                 LastName = "Super Admin",
+35:                 Phone = "+2348000000000",
+36:                 Department = "Administration",
+37:                 ProfileImageUrl = null,
+38:                 StaffId = await GenerateStaffIdAsync(context),               // Generates a unique staff id using existing records.
+39:                 Role = UserRoles.SuperAdmin,
+40:                 IsActive = true,
+41:                 PasswordSetupToken = null,
+42:                 PasswordSetupTokenExpiresAt = null,
+43:                 CreatedAt = DateTime.UtcNow
+44:             };
+45:             await context.Users.AddAsync(superAdmin);                          // Adds the entity to change tracker.
+46:             await context.SaveChangesAsync();                                 // Persists the new user to database.
+47:         }
+48:         private static string HashPassword(string password)
+49:         {
+50:             using var sha = SHA256.Create();                                 // Instantiates a SHA256 hasher.
+51:             var bytes = Encoding.UTF8.GetBytes(password);                     // Encodes password string to bytes.
+52:             var hash = sha.ComputeHash(bytes);                                // Computes SHA256 hash.
+53:             return Convert.ToBase64String(hash);                              // Returns base64 encoded hash.
+54:         }
+55:         private static async Task<string> GenerateStaffIdAsync(
+56:             AppDbContext context)
+57:         {
+58:             var year = DateTime.UtcNow.Year;                                 // Current year used in staff id prefix.
+59: 
+60:             var lastStaffId =
+61:                 await context.Users
+62:                     .Where(u =>
+63:                         u.StaffId != null &&
+64:                         u.StaffId.StartsWith(
+65:                             $"STF-{year}-"))
+66:                     .OrderByDescending(
+67:                         u => u.StaffId)
+68:                     .Select(u => u.StaffId)
+69:                     .FirstOrDefaultAsync();                                   // Retrieves last staff id for current year if any.
+70: 
+71:             var nextNumber = 1;
+72: 
+73:             if (!string.IsNullOrWhiteSpace(lastStaffId))
+74:             {
+75:                 var numberPart =
+76:                     lastStaffId
+77:                         .Split('-')
+78:                         .Last();
+79: 
+80:                 if (int.TryParse(
+81:                     numberPart,
+82:                     out var currentNumber))
+83:                 {
+84:                     nextNumber =
+85:                         currentNumber + 1;                                      // Increment numeric suffix.
+86:                 }
+87:             }
+88: 
+89:             return $"STF-{year}-{nextNumber:D6}";                              // Returns formatted staff id with zero-padded number.
+90:         }
+91:     }
+92:   
+93: }
+
+---
+File: Controllers/AuthController.cs
+1: using Microsoft.AspNetCore.Authorization;                                // For [AllowAnonymous] attribute and authorization types.
+2: using Microsoft.AspNetCore.Mvc;                                         // For ControllerBase, IActionResult, routing attributes.
+3: using TatumConnectBackened.DTOs;                                        // DTO types used as request/response payloads.
+4: using TatumConnectBackened.Services;                                   // IAuthService.
+5: 
+6: namespace TatumConnectBackened.Controllers
+7: {
+8:     [ApiController]
+9:     [Route("api/v1/[controller]")]                                      // Base route api/v1/auth for this controller.
+10: 
+11:     public class AuthController : ControllerBase
+12:     {
+13:         private readonly IAuthService _auth;
+14:         public AuthController(IAuthService auth)
+15:         {
+16:             _auth = auth;                                                   // Dependency injection of authentication service.
+17:         }
+18: 
+19:         [HttpPost("register")]
+20:         [AllowAnonymous]                                                    // Allows access without authentication.
+21:         public async Task<IActionResult> Register([FromBody] RegisterRequestDto request, CancellationToken ct)
+22:         {
+23:             try
+24:             {
+25: 
+26:                 var response = await _auth.RegisterAsync(request, ct);      // Delegates registration logic to service.
+27:                 if (!response.Success)
+28:                 {
+29:                     return Conflict(response);                              // Returns 409 if registration had domain conflict.
+30:                 }
+31:                 return Ok(response);                                        // Returns 200 with response on success.
+32:             }
+33:             catch (Exception ex)
+34:             {
+35:                 Console.WriteLine(ex);
+36:                 return BadRequest("An error occured");                   // Generic 400 on error.
+37:             }
+38:         }
+39: 
+40:         [HttpPost("verify-registration")]
+41:         [AllowAnonymous]
+42:         public async Task<IActionResult> Verify([FromBody] VerifyRegistrationOtpRequestDto request, CancellationToken ct)
+43:         {
+44:             try
+45:             {
+46:                 var response = await _auth.VerifyRegistrationOtpAsync(request, ct); // Delegates verification to auth service.
+47:                 if (!response.Success)
+48:                 {
+49:                     return BadRequest(response);
+50:                 }
+51:                 return Ok(response);
+52:             }
+53:             catch (Exception ex)
+54:             {
+55:                 Console.WriteLine(ex);
+56:                 return BadRequest("An error occured");
+57:             }
+58:         }
+59: 
+60:         [HttpPost("resend-registration-otp")]
+61:         [AllowAnonymous]
+62:         public async Task<IActionResult> ResendRegistrationOtp([FromBody] ResendRegistrationOtpRequestDto request, CancellationToken ct)
+63:         {
+64:             try
+65:             {
+66:                 var response = await _auth.ResendRegistrationOtpAsync(request, ct);
+67:                 if (!response.Success)
+68:                 {
+69:                     return BadRequest(response);
+70:                 }
+71:                 return Ok(response);
+72:             }
+73:             catch (Exception ex)
+74:             {
+75:                 Console.WriteLine(ex);
+76:                 return BadRequest("An error occured");
+77:             }
+78:         }
+79: 
+80:         [HttpPost("login")]
+81:         [AllowAnonymous]
+82:         public async Task<IActionResult> Login([FromBody] LoginRequestDto request, CancellationToken ct)
+83:         {
+84:             try
+85:             {
+86:                 var response = await _auth.LoginAsync(request, ct);         // Delegates login to auth service.
+87:                 if (!response.Success)
+88:                 {
+89:                     return Unauthorized(response);
+90:                 }
+91:                 return Ok(response);
+92:             }
+93:             catch (Exception ex)
+94:             {
+95:                 Console.WriteLine(ex);
+96:                 return BadRequest("An error occured");
+97:             }
+98:         }
+99:     }
+100: }
+
+---
+File: Services/AuthService.cs
+(Note: This file is longer; explanations reference logical blocks and the most relevant lines. Line numbers correspond to file content.)
+1-14: using and namespace imports - bring in options, configuration, DTOs, entities and repositories.
+
+Constructor and Fields:
+- Fields declared for repositories, JwtService, settings, notification service, email settings, configuration. These store injected dependencies.
+- The constructor assigns injected types to private fields. IOptions<T> is used to obtain configured options.
+
+RegisterAsync:
+- Trims and normalizes email and phone input; validates presence.
+- Checks for existing user by email using IUserRepository.GetByEmailAsync.
+- If existing and not verified, returns failure indicating registration pending; if existing and verified, returns failure stating email exists.
+- Generates OTP via GenerateOtp (random 6-digit number) and builds a new User entity with hashed password (HashPassword uses SHA256), sets role to Customer, sets registration OTP and expiry.
+- Adds user via repository and calls SavedChangesAsync to persist.
+- Calls SendRegistrationOtpAsync which composes an email message and calls NotificationService.SendEmailAsync.
+- Returns success ApiResponse with mapped UserDto (MapToDto).
+
+Other helpers in file:
+- GenerateOtp: uses RandomNumberGenerator.GetInt32 to produce cryptographically secure random 6-digit number.
+- SendRegistrationOtpAsync: formats a multi-line string (interpolated raw string) and delegates to notification service.
+- HashPassword: SHA256 -> base64 encoded hash.
+- VerifyPassword: compares hashed candidate password with stored hash.
+- MapToDto: maps User entity fields to UserDto.
+
+LoginAsync and verification flows:
+- LoginAsync finds user by email, checks registration verified/active, compares password hash, uses JwtService.GenerateAccessToken to create token, and returns LoginResponseDto containing token and user data. (Details are inside file.)
+
+Notes:
+- Uses SHA256 for password hashing; this is not recommended for password storage in production (prefer Argon2, bcrypt, or PBKDF2 with salt).
+- Many error conditions return ApiResponse.Fail with ApiError details used by controllers to send proper HTTP status codes.
+
+---
+File: Auth/JwtSettings.cs
+1-15: class JwtSettings with Issuer, Audience, Secret, AccessTokenMinutes, RefreshTokenDays. These are simple properties that map to configuration keys and are bound via Configure<T> in Program.cs.
+
+---
+File: Auth/JwtService.cs (Auth namespace)
+- Provides GenerateAccessToken(User user) similar to Services/JwtService. Constructs claims (sub, email, NameIdentifier, Email, Role) and signs token with HmacSha256 using JwtSettings.Secret; sets expiration to AccessTokenMinutes.
+- Throws if settings.Secret not configured.
+
+---
+File: Entities/User.cs
+1-96: Domain model with property annotations for EF and validation.
+- Id: primary key (Guid)
+- Email: Required, MaxLength, used as unique index in DbContext.
+- PasswordHash: stores password hash string.
+- FirstName/LastName/PhoneNumber/Phone: personal info.
+- Department, ProfileImageUrl, StaffId: additional metadata.
+- Role: Required with default UserRoles.Customer.
+- IsActive: indicates account active state.
+- PasswordSetupToken & Expires: used for admin invites/password setup.
+- CreatedAt/UpdatedAt/LastLoginAt: audit timestamps.
+- RegistrationOtp and RegistrationOtpExpiresAt & OtpAttempts: used during registration flow.
+- Password reset fields for reset token/OTP.
+- Navigation: RefreshTokens and Accounts collections.
+
+Notes: Presence of both PhoneNumber and Phone suggests duplication; code uses Phone in several places.
+
+---
+File: Entities/Account.cs
+1-34: Simple bank account entity with Id, CustomerId (FK), AccountNumber, Name, Currency, LedgerBalance, AvailableBalance, Status, CreatedAt, IsActive, and Customer navigation property (User).
+
+---
+File: Entities/RefreshToken.cs
+1-8: Minimal entity with Id and UserId. Extend with Token, ExpiresAt, Revoked etc. for full refresh token support.
+
+---
+File: Entities/Notification.cs
+1-14: Notification entity storing Id, CustomerId, Subject, Message, Type, Status, CreatedAt, ReadAt.
+
+---
+File: Services/IAuthService.cs
+1-22: Interface declaring async methods for RegisterAsync, VerifyRegistrationOtpAsync, LoginAsync, ResendRegistrationOtpAsync. Controllers depend on this abstraction.
+
+---
+File: Services/NotificationService.cs
+- Constructor injects INotificationRepository, IEmailSender, IOptions<SmsSettings>, HttpClient.
+- SendEmailAsync builds email via injected IEmailSender and returns ApiResponse success/failure.
+- SendSmsAsync constructs payload and posts to configured SMS provider endpoint using HttpClient; checks response and returns ApiResponse.
+- Some overloads and GetByCustomerAsync are unimplemented (throw NotImplementedException) and must be implemented before use.
+
+---
+File: Services/SmtpEmailSender.cs
+1-62: Implements IEmailSender using MailKit and MimeKit.
+- Constructor binds EmailSettings from config and logger.
+- SendAsync composes a MimeMessage, connects to SMTP host with SSL, authenticates, and sends the message.
+- Catches exceptions and logs accordingly.
+
+---
+File: Repositories/Repository.cs
+1-189: Generic repository providing CRUD and pagination.
+- Constructor stores AppDbContext and DbSet<T>.
+- Methods: GetByIdAsync, GetAllAsync, AddAsync, Update, UpdateAsync, Delete, DeleteAsync, CountAsync, ExistsAsync, GetPagedAsync (multiple overloads), SaveChangesAsync, SavedChangesAsync, etc.
+- Some user-specific methods are stubbed throwing NotImplementedException; those are likely artifacts and should not be on a generic repository.
+
+---
+File: Repositories/UserRepository.cs
+1-87: Extends Repository<User> and implements IUserRepository.
+- Constructor calls base(context).
+- GetByEmailAsync: returns user by email.
+- ExistsByEmailAsync: checks if any user with email exists.
+- GetUserWithTokensAsync: includes RefreshTokens navigation when retrieving user.
+- GetPasswordSetupTokenAsync: finds user with a valid password setup token.
+- ExistsByStaffIdAsync: checks staff id existence.
+- GetPagedAsync: custom paging by optional userId and PaginationParameters; returns PagedResult<User> with metadata.
+
+---
+File: Services/JwtService.cs (Services namespace)
+1-129: Duplicate of Auth/JwtService but under Services namespace. Contains GenerateAccessToken(User user) which constructs claims (sub, email, NameIdentifier, Email, Role) and signs token using settings. Throws if secret missing.
+
+---
+File: appsettings.json
+1-19: JSON configuration file that contains:
+- ConnectionStrings.DefaultConnection: localdb connection string for SQL Server.
+- Logging configuration.
+- JwtSettings: Issuer, Audience, Secret, AccessTokenMinutes, RefreshTokenDays.
+- AllowedHosts: wildcard.
+
+---
+Files: DTOs/*.cs (examples)
+- RegisterRequestDto.cs: Properties for Email, Password, FirstName, LastName, Phone. Each decorated with validation attributes (Required, EmailAddress, MaxLength, MinLength, RegularExpression) that will be used during model binding to validate incoming requests.
+- LoginRequestDto.cs: Email and Password used to accept login requests.
+- UserDto.cs: DTO returned by APIs containing selected user fields, lightly flattened and safe to expose.
+- AccountDto.cs, NotificationDto.cs, ResendRegistrationOtpRequestDto.cs, VerifyRegistrationOtpRequestDto.cs, LoginResponseDto.cs: domain-specific DTOs to shape request/response payloads for those API flows.
+
+---
+Files: Repositories/* other interfaces and classes
+- Interfaces define repository contracts. Implementations (AccountRepository, NotificationRepository) will use AppDbContext similarly to UserRepository.
+
+---
+Files: Migrations/*
+- EF Core generated migration classes describing schema changes; each contains Up/Down methods to apply/revert migrations and a designer file used by EF tooling. AppDbContextModelSnapshot.cs represents current model state.
+
+---
+Files: Responses/ApiBaseResponse.cs
+- Defines ApiResponse<T> helper used across the app to standardize JSON responses with Success, Data, Message, and Errors list.
+
+---
+Files: Common/Constants/* and Common/Models/PagedResult.cs
+- Constants: application-wide static strings like role names.
+- PagedResult: generic pagination result type with Items, PageNumber, PageSize, TotalCount, TotalPages.
+
+---
+Developer/maintenance notes (summary of findings impacting per-line understanding):
+- Some using directives in files are unused and can be removed.
+- Duplicate JwtService exists in two namespaces; both implementations do the same; keep one and register that in DI.
+- Program.cs configures authorization but does not call app.UseAuthentication() which is required to populate User principal information from JWT; add app.UseAuthentication() before UseAuthorization().
+- Password hashing uses SHA256 without salt; not secure for real passwords.
+- Seeder is present but not automatically invoked; you must call it at startup or run manually.
+- Several methods throw NotImplementedException and will cause runtime exceptions if called (NotificationService and some generic repository stubs).
+
+---
+End of file. If you want a machine-generated mapping that attaches a comment to every single source line (exactly matching every line number and content for every file) rather than grouped-block explanations, I can produce that as separate files per source file (e.g., Program_explained.txt, Controllers_AuthController_explained.txt) to make it easier to navigate. Which format do you prefer next? (I can create per-source-file detailed explanation files in the repo.)

@@ -1,0 +1,10 @@
+Repositories/IAccountRepository.cs — Purpose and key responsibilities
+
+Purpose:
+- Defines data-access contract for account-specific operations (CRUD and queries) used by higher-level services.
+
+Typical responsibilities:
+- Create / update accounts, fetch by account number or customer id, implement paging/filtering as needed.
+
+Usage:
+- Implemented by AccountRepository and injected into services that manage account behavior.

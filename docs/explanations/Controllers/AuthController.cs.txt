@@ -1,0 +1,15 @@
+AuthController.cs — Purpose and key responsibilities
+
+Purpose:
+- Exposes HTTP endpoints for authentication and registration flows.
+
+What it does:
+- Routes: POST /api/v1/auth/register, /verify-registration, /resend-registration-otp, /login.
+- Delegates logic to IAuthService (RegisterAsync, VerifyRegistrationOtpAsync, ResendRegistrationOtpAsync, LoginAsync).
+- Handles HTTP response mapping (OK, Conflict, BadRequest, Unauthorized) based on ApiResponse.Success.
+
+Usage:
+- Controller is lightweight; business rules live in AuthService. Keep controller methods small and focused on HTTP concerns.
+
+Notes:
+- All endpoints are [AllowAnonymous] because they are used to create or log in users.

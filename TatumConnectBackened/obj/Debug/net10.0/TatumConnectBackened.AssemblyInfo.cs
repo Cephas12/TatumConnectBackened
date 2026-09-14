@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TatumConnectBackened")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e21adbec665ca0fb23acb52357a2875ece9a9795")]
 [assembly: System.Reflection.AssemblyProductAttribute("TatumConnectBackened")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TatumConnectBackened")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,0 +1,45 @@
+How the pieces interact — architecture and flow
+
+Overview:
+- This solution uses a layered architecture: Controllers -> Services -> Repositories -> Database (EF Core).
+- Cross-cutting concerns (JWT auth, email, SMS, configuration, DI) are configured in Program.cs.
+
+Typical request flow (user registration):
+1. HTTP request POST /api/v1/auth/register hits AuthController.Register.
+2. Controller validates model binding and delegates to IAuthService.RegisterAsync (AuthService).
+3. AuthService performs business rules: normalize input, check for existing user via IUserRepository (UserRepository) which queries AppDbContext.
+4. AuthService creates a User entity, hashes the password, assigns registration OTP and expiry, and calls IUserRepository.AddAsync and SavedChangesAsync to persist.
+5. AuthService calls NotificationService.SendEmailAsync to send OTP. NotificationService uses an injected IEmailSender (SmtpEmailSender) which uses MailKit to send the SMTP email.
+6. Controller receives ApiResponse and returns an HTTP response (200 OK or 409 / 400 depending on result).
+
+Typical request flow (login):
+1. POST /api/v1/auth/login to AuthController.Login.
+2. Controller passes credentials to AuthService.LoginAsync.
+3. AuthService fetches user via IUserRepository.GetByEmailAsync, verifies password using VerifyPassword (SHA256 compare), ensures account verified and active.
+4. Emits a JWT using JwtService.GenerateAccessToken (claims include role and user id), returns LoginResponseDto with token and user info.
+5. Client uses JWT in Authorization: Bearer <token> header for future API calls.
+
+JWT and authentication:
+- Program.cs configures JwtBearer middleware using JwtSettings. The JWT contains important claims used for authorization.
+- Note: app.UseAuthentication() must be enabled in Program.cs so inbound requests are authenticated and HttpContext.User is populated before UseAuthorization.
+
+Data access and repositories:
+- Repositories wrap EF Core operations; this centralizes queries and keeps services focused on business logic.
+- AppDbContext defines DbSets and EF model configuration; Migrations capture schema evolution.
+
+Notifications:
+- NotificationService orchestrates sending emails and SMS; repositories persist notification records if desired.
+- SmtpEmailSender implements the actual SMTP send behavior.
+
+Seeding & Migrations:
+- DbSeeder applies migrations and seeds a development super admin. Either run it manually or call it from startup.
+
+Important design notes and improvement opportunities:
+- Consolidate duplicate JwtService implementations.
+- Add app.UseAuthentication() in Program.cs before UseAuthorization().
+- Replace SHA256 password hashing with a strong password hashing algorithm that includes a salt (e.g., Argon2, bcrypt, PBKDF2) for production.
+- Complete unimplemented repository/service methods that currently throw NotImplementedException.
+- Extend RefreshToken entity to include token value and expiry when implementing refresh tokens.
+- Clean .gitignore to avoid committing build artifacts (bin/, obj/, .vs/).
+
+This mapping should help you trace a request from controller to DB and back. For any specific endpoint or file you want a deep-dive sequence (detailed call graph, exact SQL queries, or runtime behavior), tell me which one and I will produce it as a separate document.

@@ -1,0 +1,13 @@
+DTOs/AccountDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Represents account information sent to clients in API responses.
+
+Typical fields:
+- Id, AccountNumber, Name, Currency, LedgerBalance, AvailableBalance, Status, CreatedAt, IsActive.
+
+Usage:
+- Included in UserDto.Accounts list so client can view a user's accounts without exposing internal DB details.
+
+Notes:
+- Keep DTOs minimal and avoid exposing internal identifiers unless needed.

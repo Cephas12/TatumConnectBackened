@@ -1,0 +1,19 @@
+Entities/User.cs — Purpose and key responsibilities
+
+Purpose:
+- Domain model representing application users stored in the database.
+
+Key properties and intent:
+- Id (Guid): primary key.
+- Email (required): unique identifier for login; indexed unique in AppDbContext.
+- PasswordHash: stores hashed password string.
+- FirstName, LastName, Phone/PhoneNumber: personal details (note duplication of Phone vs PhoneNumber).
+- Role: user role string (defaults to Customer) used for authorization.
+- Security fields: PasswordSetupToken, PasswordResetToken, various OTP fields, timestamps and flags like IsActive and IsRegistrationVerified.
+- Navigation: RefreshTokens and Accounts collections link to related data.
+
+Usage:
+- Persisted via EF Core; used by services and repositories in authentication and user management flows.
+
+Notes:
+- Consider consolidating Phone/PhoneNumber and ensure password hashing uses a secure algorithm in production.

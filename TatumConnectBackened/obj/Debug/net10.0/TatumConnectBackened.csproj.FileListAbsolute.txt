@@ -179,4 +179,4 @@ C:\Users\USER\source\repos\TatumConnectBackened\TatumConnectBackened\bin\Debug\n
 C:\Users\USER\source\repos\TatumConnectBackened\TatumConnectBackened\bin\Debug\net10.0\Microsoft.Web.Infrastructure.dll
 C:\Users\USER\source\repos\TatumConnectBackened\TatumConnectBackened\bin\Debug\net10.0\MimeKit.dll
 C:\Users\USER\source\repos\TatumConnectBackened\TatumConnectBackened\bin\Debug\net10.0\WebGrease.dll
-C:\Users\USER\source\repos\TatumConnectBackened\TatumConnectBackened\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
+C:\Users\USER\source\repos\TatumConnectBackened\TatumConnectBackened\obj\Debug\net10.0\TatumConnectBackened.sourcelink.json

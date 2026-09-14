@@ -1,0 +1,11 @@
+Repositories/UserRepository.cs — Purpose and key responsibilities
+
+Purpose:
+- Implements user-focused data access operations on top of the generic Repository<User>.
+
+What it provides:
+- GetByEmailAsync, ExistsByEmailAsync, GetUserWithTokensAsync (includes RefreshTokens), GetPasswordSetupTokenAsync, ExistsByStaffIdAsync.
+- GetPagedAsync customized for User with PaginationParameters and optional filtering by userId.
+
+Usage:
+- Injected into services needing user data (AuthService, controllers), encapsulating EF query logic in a reusable class.

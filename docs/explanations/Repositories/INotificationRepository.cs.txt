@@ -1,0 +1,10 @@
+Repositories/INotificationRepository.cs — Purpose and key responsibilities
+
+Purpose:
+- Interface contract for persisting and retrieving Notification entities.
+
+Typical methods:
+- AddNotificationAsync, GetByCustomerAsync, MarkAsRead, GetUnreadCount, etc.
+
+Usage:
+- Implemented by NotificationRepository and used by NotificationService to persist notifications.

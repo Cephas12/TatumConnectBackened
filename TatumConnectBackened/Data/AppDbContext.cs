@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
-using System.Transactions;
 using TatumConnectBackened.Entities;
 
 namespace TatumConnectBackened.Data
@@ -12,6 +11,7 @@ namespace TatumConnectBackened.Data
         }
         public DbSet<User> Users => Set<User>();
         public DbSet<Account> Accounts => Set<Account>();
+        public DbSet<Entities.Transaction> Transactions => Set<Entities.Transaction>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,6 +20,7 @@ namespace TatumConnectBackened.Data
             modelBuilder.Entity<User>().HasKey(x => x.Id);
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<Account>().HasKey(a => a.Id);
+            modelBuilder.Entity<Entities.Transaction>().HasKey(t => t.Id);
             modelBuilder.Entity<RefreshToken>().HasKey(r => r.Id);
            
           

@@ -1,0 +1,7 @@
+Common/Constants/UserRoles.cs — Purpose and key responsibilities
+
+Purpose:
+- Central location for string constants representing application roles (e.g., SuperAdmin, Admin, Customer).
+
+Usage:
+- Used in AuthService, DbSeeder, and authorization checks to avoid magic strings in code.

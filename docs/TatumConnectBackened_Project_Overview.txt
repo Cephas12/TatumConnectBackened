@@ -1,0 +1,87 @@
+Project Overview - TatumConnectBackened
+
+Summary
+This is an ASP.NET Core Web API (targeting .NET 10) implementing a simple digital-banking backend: EF Core for persistence (SQL Server), JWT authentication, repository/service layering, email/SMS notification plumbing, and EF migrations.
+
+Root files
+- TatumConnectBackened.slnx: Visual Studio solution file that groups the project.
+- Dockerfile / .dockerignore: Container build instructions and files excluded from Docker context.
+- TatumConnectBackened.http: HTTP Client file for quick endpoint testing.
+- appsettings.json / appsettings.Development.json: Configuration (ConnectionStrings, JwtSettings, logging, AllowedHosts).
+- Properties/launchSettings.json: Local launch profiles used by Visual Studio.
+
+Program.cs
+- Application startup: registers services and middleware.
+  - Adds controllers and OpenAPI/Swagger.
+  - Configures DbContext to use SQL Server via DefaultConnection.
+  - Registers repositories and services as scoped: IUserRepository, IAccountRepository, INotificationRepository, NotificationService, AuthService, JwtService, SmtpEmailSender.
+  - Binds JwtSettings, EmailSettings, SmsSettings from configuration.
+  - Configures JWT bearer authentication using JwtSettings.
+  - Configures Swagger UI at /swagger.
+Note: DbSeeder exists but is not invoked from Program.cs; seeding will not run unless called.
+
+Data folder
+- AppDbContext.cs: EF Core DbContext with DbSets: Users, Accounts, RefreshTokens. Configures keys and unique index on User.Email.
+- DbSeeder.cs: Applies migrations and seeds a Super Admin user (superadmin@tatumconnect.com). Uses SHA256 password hashing and generates StaffId. Not automatically executed.
+
+Entities folder
+- User.cs: Domain model for users. Properties include Id, Email, PasswordHash, FirstName, LastName, Phone/PhoneNumber, Department, ProfileImageUrl, StaffId, Role, IsActive, various tokens/OTPs, CreatedAt/UpdatedAt/LastLoginAt, OtpAttempts, IsRegistrationVerified, navigation properties for RefreshTokens and Accounts. Note: file contains both PhoneNumber and Phone (consider consolidation).
+- Account.cs: Bank account entity with CustomerId FK, AccountNumber, Name, Currency, LedgerBalance, AvailableBalance, Status, CreatedAt, IsActive, and navigation property Customer (User).
+- RefreshToken.cs: Minimal entity with Id and UserId. Consider storing token string and expiry if refresh tokens are needed.
+- Notification.cs: Customer notification record with Subject, Message, Type, Status, CreatedAt, ReadAt.
+
+DTOs folder
+- RegisterRequestDto: Registration payload with validation attributes (Email, Password, FirstName, LastName, Phone).
+- LoginRequestDto: Login payload with Email and Password.
+- UserDto: Public user representation returned by APIs (Id, Email, names, Phone, Department, ProfileImageUrl, StaffId, Role, RegistrationOtp, IsActive, CreatedAt, LastLoginAt, Accounts list).
+- Other DTOs: AccountDto, NotificationDto, ResendRegistrationOtpRequestDto, VerifyRegistrationOtpRequestDto, LoginResponseDto used for their respective flows.
+
+Controllers folder
+- AuthController.cs: Route api/v1/auth with endpoints for register, verify-registration, resend-registration-otp, and login. Uses IAuthService and returns ApiResponse wrappers.
+- WeatherForecastController.cs: Sample/template controller.
+
+Services folder
+- IAuthService.cs: Interface for RegisterAsync, VerifyRegistrationOtpAsync, LoginAsync, ResendRegistrationOtpAsync.
+- AuthService.cs: Implements registration (validates input, checks existing user, creates user with SHA256 password hash, stores RegistrationOtp and expiry, saves via IUserRepository), sends OTP via NotificationService, and handles login (verify password hash and generate JWT via JwtService). Contains helpers: GenerateOtp, HashPassword, VerifyPassword, MapToDto.
+- NotificationService.cs: Implements INotificationService. Provides SendEmailAsync (uses IEmailSender) and SendSmsAsync (HTTP POST to configured SMS provider). Some methods are not yet implemented and throw NotImplementedException.
+- SmtpEmailSender.cs: IEmailSender implementation using MailKit/MimeKit. Connects and authenticates to SMTP server then sends MIME messages.
+- JwtService (Services/JwtService.cs and Auth/JwtService.cs): Generates JWTs with claims (sub, email, NameIdentifier, role) and signs with HmacSha256 using JwtSettings.Secret. Note: duplicate implementations exist; consolidate to one.
+
+Repositories folder
+- IRepository.cs / Repository.cs: Generic repository with common operations (GetByIdAsync, GetAllAsync, AddAsync, Update, Delete, pagination, SaveChangesAsync). Some methods throw NotImplementedException and need cleanup.
+- IUserRepository.cs / UserRepository.cs: Defines user-specific data access methods. UserRepository implements queries like GetByEmailAsync, ExistsByEmailAsync, GetUserWithTokensAsync, GetPagedAsync.
+- IAccountRepository / AccountRepository and INotificationRepository / NotificationRepository: Implement account and notification data access.
+- PagedResult helper models for paginated responses.
+
+Migrations folder
+- EF Core migrations (FirstMigration and AddUserColumns) and AppDbContextModelSnapshot generated by EF.
+
+Auth folder
+- JwtSettings.cs: Options class bound from configuration: Issuer, Audience, Secret, AccessTokenMinutes, RefreshTokenDays.
+- EmailSettings.cs: Structure for email configuration used by SmtpEmailSender.
+
+Responses and Common
+- Responses/ApiBaseResponse.cs and ApiResponse<T>: Standard API response wrapper with Success, Data, Message, and list of ApiError.
+- Common/Constants/UserRoles.cs and Settings.cs: Application-wide constants and role names.
+- Common/Models/PagedResult.cs: Pagination model.
+
+Observations and recommendations
+- DbSeeder not invoked on startup; call it from Program.cs or run seed manually after applying migrations.
+- Duplicate JwtService files: remove or consolidate to avoid confusion.
+- Duplicate phone properties on User: consolidate Phone and PhoneNumber.
+- Some methods throw NotImplementedException (Repository generic methods, NotificationService methods) and must be implemented before use.
+- RefreshToken entity is minimal; add token string and expiry if refresh tokens are required.
+- appsettings.json contains a placeholder JWT secret; use secure secrets in production (environment variables or secret store).
+- Consider adding /bin and /obj to .gitignore to avoid committing build artifacts.
+
+How to run locally (quick)
+- Ensure SQL Server is reachable (DefaultConnection uses (Localdb)\\MSSQLLocalDB).
+- Update appsettings.json connection string if necessary.
+- From solution folder:
+  - dotnet build
+  - dotnet ef database update (apply migrations)
+  - Optionally call DbSeeder.SeedAsync or add seeding to startup.
+  - dotnet run or run via Visual Studio.
+- Use Swagger UI at /swagger to explore endpoints.
+
+If you want the same content in a different format (Markdown or a single-file Word-friendly text) tell me which format and I will create it in the repository so you can open and copy it.

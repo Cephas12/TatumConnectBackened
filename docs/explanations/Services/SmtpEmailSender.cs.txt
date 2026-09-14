@@ -1,0 +1,15 @@
+Services/SmtpEmailSender.cs — Purpose and key responsibilities
+
+Purpose:
+- Concrete email sender that uses MailKit/MimeKit to send SMTP messages.
+
+What it does:
+- Constructs a MimeMessage with From, To, Subject and Html body.
+- Connects to SMTP server using SSL, authenticates, and sends the email.
+- Logs success or errors using ILogger.
+
+Usage:
+- Registered in DI as IEmailSender and used by NotificationService to send emails.
+
+Notes:
+- Ensure EmailSettings in configuration match SMTP server details (Host, Port, Username, Password).

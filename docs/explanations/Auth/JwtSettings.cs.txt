@@ -1,0 +1,11 @@
+Auth/JwtSettings.cs — Purpose and key responsibilities
+
+Purpose:
+- Strongly-typed configuration class that maps JWT settings from appsettings.json.
+
+Properties:
+- Issuer, Audience, Secret, AccessTokenMinutes, RefreshTokenDays.
+
+Usage:
+- Bound in Program.cs with builder.Services.Configure<JwtSettings>(...).
+- Injected into JwtService or accessed via Configuration.GetSection(...).Get<JwtSettings>().

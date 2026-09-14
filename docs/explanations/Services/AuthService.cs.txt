@@ -1,0 +1,17 @@
+Services/AuthService.cs — Purpose and key responsibilities
+
+Purpose:
+- Implements authentication and registration business logic.
+
+Key responsibilities:
+- RegisterAsync: validate input, check duplicates, create user, hash password, set registration OTP and expiry, persist user, send OTP via NotificationService.
+- VerifyRegistrationOtpAsync: validate OTP, mark user as verified and active once OTP matches and not expired.
+- LoginAsync: verify credentials (compare password hash), require registration verified and IsActive, issue JWT via JwtService and return LoginResponseDto.
+
+Important implementation notes:
+- Uses SHA256 for password hashing (not secure for production — use modern password hashing with salt).
+- Uses RandomNumberGenerator.GetInt32 for OTP generation (secure RNG).
+- Delegates email/SMS via NotificationService and IEmailSender.
+
+Usage:
+- Injected into AuthController; central place for auth rules and multi-step processes.

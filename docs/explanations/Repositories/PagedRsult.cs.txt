@@ -1,0 +1,13 @@
+Repositories/PagedRsult.cs — Purpose and key responsibilities
+
+Purpose:
+- Likely a small helper class (note misspelling) facilitating paged results from repository queries.
+
+What it should contain:
+- Properties: Items (IEnumerable<T>), PageNumber, PageSize, TotalCount, TotalPages.
+
+Usage:
+- Returned by GetPagedAsync methods to provide pagination metadata along with items.
+
+Notes:
+- Consider renaming to PagedResult.cs to match standard naming and avoid typos that confuse consumers.

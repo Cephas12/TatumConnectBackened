@@ -1,0 +1,15 @@
+Services/INotificationService.cs — Purpose and key responsibilities
+
+Purpose:
+- Defines the contract for sending notifications (email, SMS, in-app) and querying them.
+
+Typical methods:
+- Task<ApiResponse<object>> SendEmailAsync(string email, string subject, string htmlMessage, CancellationToken ct = default)
+- Task<ApiResponse<object>> SendSmsAsync(string phoneNumber, string message, CancellationToken ct)
+- Task<ApiResponse<List<NotificationDto>>> GetByCustomerAsync(Guid customerId, CancellationToken ct = default)
+
+Usage:
+- Implemented by NotificationService; used by AuthService and other services to send messages.
+
+Notes:
+- Keep API responses consistent using ApiResponse<T> wrapper.

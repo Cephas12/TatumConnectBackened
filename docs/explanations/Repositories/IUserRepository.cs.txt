@@ -1,0 +1,10 @@
+Repositories/IUserRepository.cs — Purpose and key responsibilities
+
+Purpose:
+- Interface declaring user-specific repository methods.
+
+Common methods include:
+- GetByEmailAsync, ExistsByEmailAsync, GetUserWithTokensAsync, GetPasswordSetupTokenAsync, ExistsByStaffIdAsync, GetPagedAsync.
+
+Usage:
+- Implemented by UserRepository; used by services to depend on the abstraction rather than EF Core directly.

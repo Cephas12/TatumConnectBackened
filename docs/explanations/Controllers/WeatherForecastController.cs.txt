@@ -1,0 +1,10 @@
+WeatherForecastController.cs — Purpose and key responsibilities
+
+Purpose:
+- Template/example controller created by ASP.NET project templates.
+
+What it does:
+- Provides a sample GET endpoint returning generated weather forecast data.
+
+Usage:
+- Not required for production; can be removed. Useful for quick smoke testing of the app pipeline.

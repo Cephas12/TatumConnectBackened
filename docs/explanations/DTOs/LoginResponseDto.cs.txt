@@ -1,0 +1,16 @@
+DTOs/LoginResponseDto.cs — Purpose and key responsibilities
+
+Purpose:
+- Represents the response returned after a successful login.
+
+Typical fields:
+- AccessToken: JWT string returned to the client.
+- ExpiresIn: expiration time or minutes.
+- RefreshToken: optional refresh token string.
+- User: UserDto containing basic user profile info.
+
+Usage:
+- Returned by AuthService.LoginAsync and sent to client for subsequent authenticated requests.
+
+Notes:
+- Do not include sensitive fields (like PasswordHash) in the response DTO.

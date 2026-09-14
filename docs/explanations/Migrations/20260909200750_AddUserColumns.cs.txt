@@ -1,0 +1,14 @@
+Migrations/20260909200750_AddUserColumns.cs — Purpose and key responsibilities
+
+Purpose:
+- EF Core migration that adds or alters columns on the User table (e.g., new OTP fields, Phone, StaffId, or other user-related properties) after the initial migration.
+
+What it contains:
+- Up method: adds new columns or alters column definitions to match User entity changes.
+- Down method: reverts those changes.
+
+Usage:
+- Apply with dotnet ef database update or via Database.MigrateAsync.
+
+Notes:
+- Review migration for nullable changes to avoid data loss in production; ensure default values where necessary.

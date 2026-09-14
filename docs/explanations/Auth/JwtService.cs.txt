@@ -1,0 +1,15 @@
+Auth/JwtService.cs — Purpose and key responsibilities
+
+Purpose:
+- Helper to generate signed JWT access tokens for a given User.
+
+What it does:
+- Builds claims (sub, email, NameIdentifier, Email, Role).
+- Creates symmetric signing key from JwtSettings.Secret and signs token with HMAC-SHA256.
+- Sets expiry using AccessTokenMinutes.
+
+Usage:
+- Injected by services that need to issue JWTs (AuthService).
+
+Notes:
+- There is a duplicate implementation in Services/JwtService.cs; consolidate to one implementation to avoid confusion.

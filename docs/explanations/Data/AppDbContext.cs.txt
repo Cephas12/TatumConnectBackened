@@ -1,0 +1,16 @@
+AppDbContext.cs — Purpose and key responsibilities
+
+Purpose:
+- EF Core DbContext representing database session and models mapping.
+
+What it does:
+- Exposes DbSet<User>, DbSet<Account>, DbSet<RefreshToken> for querying and persistence.
+- Configures model metadata in OnModelCreating: primary keys and unique index on User.Email.
+
+Usage:
+- Registered in DI in Program.cs with SQL Server provider via connection string.
+- Used by repositories to access DbSets.
+
+Notes:
+- Migrations are generated from this model; changes here require new EF migrations.
+- Remove unused using directives to keep file clean.

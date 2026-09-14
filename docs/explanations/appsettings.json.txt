@@ -1,0 +1,12 @@
+appsettings.json — Purpose and key responsibilities
+
+Purpose:
+- Central configuration file for the application (connection strings, JWT settings, logging, etc.).
+
+Key sections:
+- ConnectionStrings.DefaultConnection: database connection string.
+- JwtSettings: Issuer, Audience, Secret, AccessTokenMinutes, RefreshTokenDays.
+- Logging levels and AllowedHosts.
+
+Usage:
+- Bound into strongly typed objects (JwtSettings) or read directly through IConfiguration. Do not store production secrets here; use environment variables or a secret manager.
