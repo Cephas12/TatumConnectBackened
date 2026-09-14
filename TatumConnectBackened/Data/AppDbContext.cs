@@ -13,6 +13,7 @@ namespace TatumConnectBackened.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<Account> Accounts => Set<Account>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+        public DbSet<Biller> Billers => Set<Biller>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +22,9 @@ namespace TatumConnectBackened.Data
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
             modelBuilder.Entity<Account>().HasKey(a => a.Id);
             modelBuilder.Entity<RefreshToken>().HasKey(r => r.Id);
+            modelBuilder.Entity<Biller>().HasKey(b => b.Id);
+            modelBuilder.Entity<Biller>().Property(b => b.Category).HasConversion<string>();
+            modelBuilder.Entity<Biller>().HasIndex(b => b.Code).IsUnique();
            
           
         }

@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.Json.Serialization;
 using TatumConnectBackened.Auth;
 using TatumConnectBackened.Common.Constants;
 using TatumConnectBackened.Repositories;
@@ -14,7 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter()));
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -66,6 +71,7 @@ builder.Services.AddSwaggerGen(options =>
 //egister repository
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IBillerRepository, BillerRepository>();
 //builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 //builder.Services.AddScoped<ITransferRepository, TransferRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
@@ -83,6 +89,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 //services
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IBillerService, BillerService>();
 
 // Register JwtService so it can be injected into AuthService
 builder.Services.AddScoped<TatumConnectBackened.Services.JwtService>();
