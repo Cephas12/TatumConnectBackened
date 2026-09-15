@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TatumConnectBackened.Data;
 
@@ -11,9 +12,11 @@ using TatumConnectBackened.Data;
 namespace TatumConnectBackened.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915064831_ConvertProductCategoryToStringAndFixRelationships")]
+    partial class ConvertProductCategoryToStringAndFixRelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,7 +66,7 @@ namespace TatumConnectBackened.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("TatumConnectBackened.Entities.Biller", b =>
@@ -104,7 +107,7 @@ namespace TatumConnectBackened.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Billers", (string)null);
+                    b.ToTable("Billers");
                 });
 
             modelBuilder.Entity("TatumConnectBackened.Entities.Product", b =>
@@ -159,7 +162,7 @@ namespace TatumConnectBackened.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("TatumConnectBackened.Entities.ProductItem", b =>
@@ -210,7 +213,7 @@ namespace TatumConnectBackened.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductItems", (string)null);
+                    b.ToTable("ProductItems");
                 });
 
             modelBuilder.Entity("TatumConnectBackened.Entities.RefreshToken", b =>
@@ -226,7 +229,7 @@ namespace TatumConnectBackened.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("TatumConnectBackened.Entities.Transaction", b =>
@@ -292,7 +295,7 @@ namespace TatumConnectBackened.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Transactions", (string)null);
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("TatumConnectBackened.Entities.User", b =>
@@ -388,7 +391,7 @@ namespace TatumConnectBackened.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("TatumConnectBackened.Entities.Account", b =>

@@ -47,7 +47,7 @@ namespace TatumConnectBackened.Data
             modelBuilder.Entity<Product>().HasIndex(p => p.Code).IsUnique();
             modelBuilder.Entity<Product>().Property(p => p.Category).HasConversion<string>();
             modelBuilder.Entity<Product>()
-                .HasOne<Biller>()
+                .HasOne(p => p.Biller)
                 .WithMany(b => b.Products)
                 .HasForeignKey(p => p.BillerId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -55,7 +55,7 @@ namespace TatumConnectBackened.Data
             // ProductItem
             modelBuilder.Entity<ProductItem>().HasKey(pi => pi.Id);
             modelBuilder.Entity<ProductItem>()
-                .HasOne<Product>()
+                .HasOne(pi => pi.Product)
                 .WithMany(p => p.ProductItems)
                 .HasForeignKey(pi => pi.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
