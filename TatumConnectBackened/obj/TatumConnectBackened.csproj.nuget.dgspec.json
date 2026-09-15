@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\USER\\source\\repos\\TatumConnectBackened\\TatumConnectBackened\\TatumConnectBackened.csproj": {}
+    "C:\\Users\\USER\\StudioProjects\\copilot-worktrees\\TatumConnectBackened\\cephas12-psychic-fishstick\\TatumConnectBackened\\TatumConnectBackened.csproj": {}
   },
   "projects": {
-    "C:\\Users\\USER\\source\\repos\\TatumConnectBackened\\TatumConnectBackened\\TatumConnectBackened.csproj": {
+    "C:\\Users\\USER\\StudioProjects\\copilot-worktrees\\TatumConnectBackened\\cephas12-psychic-fishstick\\TatumConnectBackened\\TatumConnectBackened.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\USER\\source\\repos\\TatumConnectBackened\\TatumConnectBackened\\TatumConnectBackened.csproj",
+        "projectUniqueName": "C:\\Users\\USER\\StudioProjects\\copilot-worktrees\\TatumConnectBackened\\cephas12-psychic-fishstick\\TatumConnectBackened\\TatumConnectBackened.csproj",
         "projectName": "TatumConnectBackened",
-        "projectPath": "C:\\Users\\USER\\source\\repos\\TatumConnectBackened\\TatumConnectBackened\\TatumConnectBackened.csproj",
+        "projectPath": "C:\\Users\\USER\\StudioProjects\\copilot-worktrees\\TatumConnectBackened\\cephas12-psychic-fishstick\\TatumConnectBackened\\TatumConnectBackened.csproj",
         "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\USER\\source\\repos\\TatumConnectBackened\\TatumConnectBackened\\obj\\",
+        "outputPath": "C:\\Users\\USER\\StudioProjects\\copilot-worktrees\\TatumConnectBackened\\cephas12-psychic-fishstick\\TatumConnectBackened\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
